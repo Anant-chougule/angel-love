@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#160a19">
+<title>A Little Something for You ❤️</title>
+<style>
+  :root { --pink:#ff6eaa; --hot:#ff3f91; --cream:#f5e8d5; --ink:#35263d; }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; font-family: "Trebuchet MS", Arial, sans-serif; background:#100913; color:#fff; overflow-x:hidden; }
+  button { font:inherit; cursor:pointer; }
+  .screen { min-height:100vh; display:none; align-items:center; justify-content:center; padding:24px 16px; position:relative; }
+  .screen.active { display:flex; animation:appear .65s ease both; }
+  @keyframes appear { from { opacity:0; transform:translateY(8px) } to {opacity:1; transform:none} }
+  .grid-bg { position:fixed; inset:0; pointer-events:none; opacity:.23; background-image:linear-gradient(#ff7fb01a 1px,transparent 1px),linear-gradient(90deg,#ff7fb01a 1px,transparent 1px); background-size:28px 28px; }
+  .glow { position:fixed; width:360px; height:360px; border-radius:50%; background:#ff3f9124; filter:blur(70px); pointer-events:none; }
+  .glow.one { top:-130px; left:-100px } .glow.two { bottom:-160px; right:-90px; background:#a54cff20; }
+  .card { width:min(100%,520px); text-align:center; border:1px solid #ff8dbc4d; border-radius:28px; padding:clamp(24px,5vw,42px); background:linear-gradient(145deg,#291326ed,#180e20f2); box-shadow:0 18px 65px #0007,0 0 45px #ff4f9820; position:relative; }
+  .tiny { color:#ffc3dd; text-transform:uppercase; letter-spacing:.18em; font-size:.72rem; }
+  h1 { margin:12px 0; font-size:clamp(2rem,7vw,3.3rem); line-height:1.1; }
+  .subtitle { color:#e8cddd; line-height:1.6; margin:14px auto 24px; max-width:370px; }
+  .cute { font-size:clamp(5rem,22vw,8rem); line-height:1.2; display:block; margin:10px 0 18px; filter:drop-shadow(0 7px 16px #ff5a9d55); animation:bob 2.2s ease-in-out infinite; }
+  @keyframes bob { 0%,100%{transform:translateY(0) rotate(-3deg)} 50%{transform:translateY(-9px) rotate(3deg)} }
+  .buttons { display:flex; justify-content:center; align-items:center; gap:12px; flex-wrap:wrap; min-height:110px; position:relative; overflow:visible; }
+  .btn { border:0; border-radius:999px; padding:14px 24px; font-weight:800; transition:transform .18s,filter .18s; }
+  .btn:hover { transform:translateY(-2px); filter:brightness(1.07); }
+  .yes { color:#351022; background:linear-gradient(135deg,#ffb4d3,#ff6ea9); box-shadow:0 7px 22px #ff4f9850; }
+  .no { color:#fff; background:#ffffff12; border:1px solid #ffffff2a; }
+  .message { min-height:28px; margin-top:18px; color:#ffc3dd; font-size:.95rem; }
+  .progress { margin-top:25px; color:#9c8199; font-size:.75rem; }
+  /* Shayari paper */
+  #shayari { background:radial-gradient(ellipse at top,#51304a55,transparent 60%); }
+  .paper { width:min(100%,720px); color:var(--ink); background:var(--cream); padding:42px clamp(20px,6vw,66px) 30px; border-radius:5px 5px 12px 12px; box-shadow:0 25px 75px #0008; position:relative; transform:rotate(-.4deg); background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 37px,#c9b7a3 38px,#c9b7a3 39px); }
+  .divider { display:flex; align-items:center; justify-content:center; gap:14px; margin:0 auto 22px; color:#7d405a; font-size:1.8rem; }
+  .divider:before,.divider:after { content:""; height:2px; background:#7d405a; flex:1; max-width:180px; }
+  .poem { font-family:"Segoe Print","Comic Sans MS",cursive; font-style:italic; font-size:clamp(1.05rem,3.5vw,1.6rem); line-height:1.68; text-align:center; white-space:pre-line; }
+  .paper .btn { margin-top:20px; }
+  /* Heart screen */
+  #heart { background:#05040a; overflow:hidden; }
+  .heart-stage { width:min(100%,980px); height:min(84vh,760px); min-height:440px; position:relative; display:flex; align-items:center; justify-content:center; }
+  #heartCanvas { width:100%; height:100%; display:block; }
+  .angel-label { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); background:#000; color:#fff; border-radius:2px; padding:13px 22px; min-width:190px; text-align:center; font-size:clamp(1.2rem,4vw,2rem); font-weight:900; letter-spacing:.03em; text-shadow:0 0 10px #ff8ac4; z-index:2; }
+  .footer-love { position:absolute; bottom:8px; left:0; right:0; text-align:center; color:#ffb6d9; font-style:italic; font-size:.9rem; pointer-events:none; }
+  .replay { position:absolute; top:12px; right:12px; z-index:3; background:#ffffff12; color:#ffd7e8; border:1px solid #ffffff30; border-radius:99px; padding:9px 13px; font-size:.8rem; }
+  .next-love { position:absolute; bottom:48px; left:50%; transform:translateX(-50%); z-index:4; white-space:nowrap; background:linear-gradient(135deg,#ffb4d3,#ff6ea9); color:#351022; border:0; border-radius:999px; padding:12px 19px; font-weight:800; box-shadow:0 7px 24px #ff4f9850; }
+  /* SCREEN 4: the final love note */
+  #love-note { overflow:hidden; background:radial-gradient(ellipse at 50% 38%,#7b285b55,transparent 58%),linear-gradient(150deg,#100713,#220b22 55%,#100713); }
+  .love-note-card { width:min(100%,560px); text-align:center; position:relative; padding:clamp(30px,7vw,54px) clamp(20px,6vw,38px); border:1px solid #ff9ecb65; border-radius:30px; background:linear-gradient(145deg,#32132ee8,#190d22ed); box-shadow:0 20px 75px #0008,0 0 55px #ff4f9820; }
+  .note-kicker { color:#ffc1df; text-transform:uppercase; letter-spacing:.22em; font-size:.72rem; }
+  .note-heart { display:block; font-size:clamp(4rem,18vw,6.5rem); line-height:1.2; margin:10px 0 18px; filter:drop-shadow(0 0 22px #ff4f9866); animation:bob 2.3s ease-in-out infinite; }
+  .note-message { margin:0 auto 22px; max-width:450px; font-family:'Brush Script MT','Segoe Script','Comic Sans MS',cursive; font-size:clamp(2rem,8vw,3.6rem); line-height:1.22; font-weight:700; color:#ffe0ee; text-shadow:0 0 18px #ff69b466; }
+  .note-message span { display:block; color:#ff82b8; margin-top:8px; }
+  .note-message span:last-child { color:#ffe0ee; font-size:.88em; text-shadow:0 0 20px #ff69b477; }
+  .note-caption { color:#e8cddd; font-size:1rem; line-height:1.7; }
+  .note-sparkles { color:#ffb6d9; font-size:1.4rem; letter-spacing:.5em; margin:18px 0 24px; }
+  @media (max-width:480px) { .paper { padding-top:30px; } .heart-stage { min-height:390px; height:75vh; } .angel-label { min-width:155px; padding:10px 13px; } .next-love { bottom:43px; } }
+  @media (max-width:480px) { .paper { padding-top:30px; } .heart-stage { min-height:390px; height:75vh; } .angel-label { min-width:155px; padding:10px 13px; } }
+  @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; } }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div><div class="glow one"></div><div class="glow two"></div>
+
+<!-- SCREEN 1: Interactive welcome -->
+<section id="welcome" class="screen active">
+  <div class="card">
+    <div class="tiny">A tiny question for you</div>
+    <span class="cute" aria-hidden="true">🥺💗</span>
+    <h1>Do you love me?</h1>
+    <p class="subtitle">I made a little something just for you.<br>Choose honestly… but choose with your heart. 💌</p>
+    <div class="buttons">
+      <button class="btn yes" id="yesBtn">Yes, of course! 💖</button>
+      <button class="btn no" id="noBtn">No 🙈</button>
+    </div>
+    <div class="message" id="reply" aria-live="polite"></div>
+    <div class="progress">MADE WITH A LITTLE EXTRA LOVE ♡</div>
+  </div>
+</section>
+
+<!-- SCREEN 2: Shayari -->
+<section id="shayari" class="screen">
+  <article class="paper">
+    <div class="divider">♡</div>
+    <div class="poem">“Har nazar ko ek nazar
+ki talash hai,
+Us chehre mein kuch
+toh khaas hai.
+
+Aapse dosti hum yun
+hi nahi kar baithe,
+Kya karein hamari
+Pasand hi kuch
+khaas hai.....!”</div>
+    <div class="divider" style="margin-top:20px">♡</div>
+    <div style="text-align:center">
+      <button class="btn yes" id="heartBtn">Open My Heart ❤️</button>
+    </div>
+  </article>
+</section>
+
+<!-- SCREEN 3: Heart made of LOVE YOU words -->
+<section id="heart" class="screen">
+  <button class="replay" id="replayBtn">Replay heart ↻</button>
+  <div class="heart-stage">
+    <canvas id="heartCanvas" aria-label="A heart made of pink LOVE YOU words"></canvas>
+    <div class="angel-label">ANGEL 👼🏻</div>
+    <div class="footer-love">Forever &amp; Always ♡</div>
+  </div>
+  <button class="next-love" id="loveNoteBtn">One more thing, Angel 💌</button>
+</section>
+
+<!-- SCREEN 4: A final heartfelt message -->
+<section id="love-note" class="screen">
+  <article class="love-note-card">
+    <div class="note-kicker">Just for you, my Angel</div>
+    <span class="note-heart" aria-hidden="true">🩷</span>
+    <h1 class="note-message">I love you yaar<span>I love you so much 😊</span><span>I love you Angel 👼🏻</span></h1>
+    <div class="note-sparkles" aria-hidden="true">♡ ✦ ♡</div>
+    <p class="note-caption">No words will ever be enough to tell you how special you are to me. You mean so much to me, yaar. 💗</p>
+    <button class="btn yes" id="replayAllBtn">Replay our little story ↻</button>
+  </article>
+</section>
+
+<script>
+(() => {
+  const screens = ["welcome", "shayari", "heart", "love-note"].map(id => document.getElementById(id));
+  let current = "welcome";
+  let animationFrame = null;
+  let resizeTimer = null;
+
+  function showScreen(id) {
+    current = id;
+    screens.forEach(s => s.classList.toggle("active", s.id === id));
+    if (id === "heart") {
+      cancelAnimationFrame(animationFrame);
+      requestAnimationFrame(() => drawHeart(true));
+    }
+  }
+
+  // The question is shown only once. The No button playfully moves
+  // whenever someone touches/clicks it, like in the reference video.
+  const noBtn = document.getElementById("noBtn");
+  const buttonArea = noBtn.parentElement;
+  let noMoves = 0;
+
+  function moveNoButton(event) {
+    if (current !== "welcome") return;
+    if (event) event.preventDefault();
+
+    noMoves++;
+    const area = buttonArea.getBoundingClientRect();
+    const btn = noBtn.getBoundingClientRect();
+    const pad = 8;
+
+    // Move within the welcome card/button area, keeping it visible.
+    const maxX = Math.max(pad, area.width - btn.width - pad);
+    const maxY = 105;
+    const x = pad + Math.random() * Math.max(0, maxX - pad);
+    const y = (Math.random() * maxY) - maxY / 2;
+
+    noBtn.style.position = "relative";
+    noBtn.style.left = `${x - (area.width - btn.width) / 2}px`;
+    noBtn.style.top = `${y}px`;
+    noBtn.style.transition = "left .18s ease, top .18s ease, transform .18s ease";
+    document.getElementById("reply").textContent =
+      [
+        "Aww, please think again? 🥹",
+        "Ek aur baar soch lo! 💗",
+        "Pakka aapka answer 'No' hai? 🙁",
+        "ANGEL PLEASE AISA NA KARO PLEASE  SAY YES ☺️"
+      ][(noMoves - 1) % 4];
+  }
+
+  // pointerdown works for mouse, touch, and pen.
+  noBtn.addEventListener("pointerdown", moveNoButton);
+
+  document.getElementById("yesBtn").addEventListener("click", () => showScreen("shayari"));
+  document.getElementById("heartBtn").addEventListener("click", () => showScreen("heart"));
+  document.getElementById("replayBtn").addEventListener("click", () => drawHeart(true));
+  document.getElementById("loveNoteBtn").addEventListener("click", () => showScreen("love-note"));
+  document.getElementById("replayAllBtn").addEventListener("click", () => showScreen("welcome"));
+
+  // Classic, symmetrical heart curve, normalized for the canvas.
+  function heartPoint(t) {
+    return {
+      x: 16 * Math.pow(Math.sin(t), 3) / 17,
+      y: (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) / 17
+    };
+  }
+  function pointInHeart(x, y, boundary) {
+    let inside = false;
+    for (let i = 0, j = boundary.length - 1; i < boundary.length; j = i++) {
+      const a = boundary[i], b = boundary[j];
+      const crosses = ((a.y > y) !== (b.y > y)) &&
+        (x < (b.x - a.x) * (y - a.y) / ((b.y - a.y) || 1e-9) + a.x);
+      if (crosses) inside = !inside;
+    }
+    return inside;
+  }
+
+  function drawHeart(animate) {
+    const canvas = document.getElementById("heartCanvas");
+    const rect = canvas.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+    canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, rect.width, rect.height);
+    ctx.fillStyle = "#05040a";
+    ctx.fillRect(0, 0, rect.width, rect.height);
+
+    const w = rect.width, h = rect.height;
+    const scale = Math.min((w - 48) / 32, (h - 70) / 30);
+    const cx = w / 2, cy = h / 2 - 4;
+    const colors = ["#ff69b4", "#ff85c1", "#ffb6d9", "#ffd0e5"];
+    const points = [];
+    const boundary = Array.from({length: 240}, (_, i) => heartPoint((Math.PI * 2 * i) / 240));
+
+    // Fill the complete classic heart silhouette with evenly spaced LOVE YOU rows.
+    // Testing against the curve keeps the top lobes rounded and the bottom tip sharp.
+    for (let y = -1.0; y <= 0.96; y += 0.105) {
+      for (let x = -1.0; x <= 1.0; x += 0.105) {
+        if (pointInHeart(x, y, boundary)) points.push({x, y});
+      }
+    }
+    // Randomized reveal order gives a forming-heart effect.
+    for (let i = points.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [points[i], points[j]] = [points[j], points[i]];
+    }
+
+    function paint(count) {
+      ctx.fillStyle = "#05040a";
+      ctx.fillRect(0, 0, w, h);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      points.slice(0, count).forEach((p, i) => {
+        const x = cx + p.x * scale * 16;
+        const y = cy - p.y * scale * 16;
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.font = "bold 9px Arial, sans-serif";
+        ctx.fillText("LOVE YOU", x, y);
+      });
+
+      // Inner heart outline made of LOVE labels.
+      for (let i = 0; i < 120; i++) {
+        const p = heartPoint((Math.PI * 2 * i) / 120);
+        ctx.fillStyle = i % 2 ? "#ff8ac4" : "#ffb6d9";
+        ctx.font = "bold 8px Arial, sans-serif";
+        ctx.fillText("LOVE", cx + p.x * scale * 0.38, cy - p.y * scale * 0.38);
+      }
+    }
+
+    if (!animate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      paint(points.length);
+      return;
+    }
+    const batch = 42;
+    let index = 0;
+    function frame() {
+      if (current !== "heart") return;
+      index = Math.min(index + batch, points.length);
+      paint(index);
+      if (index < points.length) animationFrame = requestAnimationFrame(frame);
+    }
+    paint(0);
+    animationFrame = requestAnimationFrame(frame);
+  }
+
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (current === "heart") drawHeart(false);
+    }, 120);
+  });
+})();
+</script>
+</body>
+</html>
